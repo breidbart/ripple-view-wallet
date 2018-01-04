@@ -32,7 +32,7 @@ function createWindow() {
   });
   
   // Open Debugging Tools
-  win.openDevTools();
+  //win.openDevTools();
 
   // and load the index.html of the app.
   win.loadURL(url.format({
