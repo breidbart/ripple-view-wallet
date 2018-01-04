@@ -38,7 +38,7 @@
             </h1>
           </div>
           <ul class="wallets">
-            <li v-for="wallet in ripple_wallets">
+            <li v-for="wallet in addresses">
               <span>{{ wallet.address }}</span> <span>{{ wallet.xrp }} XRP / {{ wallet.usd }} USD</span>
             </li>
           </ul>
@@ -79,8 +79,7 @@
       el: '#app',
       data: {
         addresses: [],
-        ripple_coin: [],
-        ripple_wallets: []
+        ripple_coin: []
       },
       mounted() {
         this.addresses = mainProcess.addresses;
@@ -88,14 +87,11 @@
           this.ripple_coin = result[0];
           mainProcess.getLedgerVersion().then(version => {
             this.addresses.forEach((item, index) => {
-              mainProcess.getRippleWalletValue(item).then(result => {
-                let xrp = result[0].value
-                let newItem = {
-                  address: item,
-                  xrp: xrp,
-                  usd: (xrp * this.ripple_coin.price_usd).toFixed(2)
-                };
-                this.ripple_wallets.push(newItem);
+              mainProcess.getRippleWalletValue(item.address).then(result => {
+                const xrp = result[0].value
+                const address = this.addresses[index];
+                Vue.set(address, 'xrp', xrp);
+                Vue.set(address, 'usd', (xrp * this.ripple_coin.price_usd).toFixed(2));
               });
             });
           });
@@ -104,7 +100,7 @@
       computed: {
         totalUSD: function() {
           let total = 0;
-          this.ripple_wallets.forEach((item, index) => {
+          this.addresses.forEach((item, index) => {
             for (const [key, value] of Object.entries(item)) {
               if (key === 'usd') {
                 total += Number(value);
@@ -115,7 +111,7 @@
         },
         totalXRP: function() {
           let total = 0;
-          this.ripple_wallets.forEach((item, index) => {
+          this.addresses.forEach((item, index) => {
             for (const [key, value] of Object.entries(item)) {
               if (key === 'xrp') {
                 total += Number(value);

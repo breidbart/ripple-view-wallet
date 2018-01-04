@@ -5,19 +5,19 @@ const RippleAPI = require('ripple-lib').RippleAPI;
 const Request = require('request');
 const api = new RippleAPI({server: 'wss://s1.ripple.com:443'});
 const addresses = [
-    'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
-    'rEr3hxu5aim5tDWwH7H8BK47K91tR8c7FM',
-    'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y',
-    'rU6NJQXBwCEVagpTeEev19bDnMfWeG3nVC',
-    'r4HrNJtMQnyytALNBBCkfYRkw5Pc4izFFo',
-    'rsoGpiGJqNijUPBtkUhhwpK8jwTW5zTGAQ',
-    'rhXZDebYFALnTyWhFFPQJNqREGa27JPYiA',
-    'rLzutsN392joFzuKpmfaays6cQ5SvfRBKd',
-    'rEb8TK3gBgk5auZkwc6sHnwrGVJH8DuaLh',
-    'rDsbeomae4FXwgQTJp9Rs64Qg9vDiTCdBv',
-    'rUTKsx2VToAmqHGHs6vniP8KYu4Vg8RWKi',
-    'rJCZWcLeQM222ctHGRC2CwZqsQLhVepQgo',
-    'rLMPP2o22VvWDYevzfHvhHKzRUS81gzsSd'
+    { address: 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq' },
+    { address: 'rEr3hxu5aim5tDWwH7H8BK47K91tR8c7FM' },
+    { address: 'rKiCet8SdvWxPXnAgYarFUXMh1zCPz432Y' },
+    { address: 'rU6NJQXBwCEVagpTeEev19bDnMfWeG3nVC' },
+    { address: 'r4HrNJtMQnyytALNBBCkfYRkw5Pc4izFFo' },
+    { address: 'rsoGpiGJqNijUPBtkUhhwpK8jwTW5zTGAQ' },
+    { address: 'rhXZDebYFALnTyWhFFPQJNqREGa27JPYiA' },
+    { address: 'rLzutsN392joFzuKpmfaays6cQ5SvfRBKd' },
+    { address: 'rEb8TK3gBgk5auZkwc6sHnwrGVJH8DuaLh' },
+    { address: 'rDsbeomae4FXwgQTJp9Rs64Qg9vDiTCdBv' },
+    { address: 'rUTKsx2VToAmqHGHs6vniP8KYu4Vg8RWKi' },
+    { address: 'rJCZWcLeQM222ctHGRC2CwZqsQLhVepQgo' },
+    { address: 'rLMPP2o22VvWDYevzfHvhHKzRUS81gzsSd' }
   ];
 // Keep a global reference of the window object, if you don't, the window will be closed automatically when the Javascript object is garbage collected.
 let win;
@@ -32,7 +32,7 @@ function createWindow() {
   });
   
   // Open Debugging Tools
-  win.openDevTools();
+  //win.openDevTools();
 
   // and load the index.html of the app.
   win.loadURL(url.format({
