@@ -84,28 +84,9 @@
       mounted() {
         // Get and store addresses from server (main.js)
         this.addresses = mainProcess.addresses;
-        // Get ripple market data from coinmarketcap API
-        mainProcess.getRippleMarketValue().then(result => {
-          // Store data
-          this.ripple_coin = result[0];
-          // Have to get ledger version first to fix bug in ripple-lib
-          // that deals with asyncronous javascript connections
-          mainProcess.getLedgerVersion().then(version => {
-            // loop through each address
-            this.addresses.forEach((item, index) => {
-              // Make call to ripple-lib API
-              mainProcess.getRippleWalletValue(item.address).then(result => {
-                // Store values for display
-                const xrp = result[0].value
-                const address = this.addresses[index];
-                Vue.set(address, 'xrp', xrp);
-                Vue.set(address, 'usd', (xrp * this.ripple_coin.price_usd).toFixed(2));
-              });
-            });
-          });
-        });
-        // Refresh page every minute
-        setTimeout("location.reload(true);", 60000);
+        this.getData();
+        // Refresh data every 60 seconds
+        setInterval(this.getData, 60000);
       },
       computed: {
         totalUSD: function() {
@@ -131,9 +112,31 @@
           return total.toFixed(2);
         }
       },
-      methods: {}
+      methods: {
+        getData: function() {
+          // Get ripple market data from coinmarketcap API
+          mainProcess.getRippleMarketValue().then(result => {
+            // Store data
+            this.ripple_coin = result[0];
+            // Have to get ledger version first to fix bug in ripple-lib
+            // that deals with asyncronous javascript connections
+            mainProcess.getLedgerVersion().then(version => {
+              // loop through each address
+              this.addresses.forEach((item, index) => {
+                // Make call to ripple-lib API
+                mainProcess.getRippleWalletValue(item.address).then(result => {
+                  // Store values for display
+                  const xrp = parseFloat(result[0].value)
+                  const address = this.addresses[index];
+                  Vue.set(address, 'xrp', xrp);
+                  Vue.set(address, 'usd', (xrp * this.ripple_coin.price_usd).toFixed(2));
+                });
+              });
+            });
+          });
+        }
+      }
     });
   </script>
 </body>
-
 </html>
