@@ -1,0 +1,26 @@
+body {
+  padding-top: 70px;
+}
+
+.wallets {
+  list-style-type: none;
+  padding: 0;
+}
+
+.wallets li {
+  border-bottom: 2px solid #ddd;
+  padding: 10px 10px;
+}
+
+.wallets li:first-of-type {
+  border-top: 2px solid #ddd;
+}
+
+.wallets li span:first-of-type {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.wallets li span:last-of-type {
+  float: right;
+}

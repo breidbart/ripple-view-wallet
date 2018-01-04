@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>XRP Wallets</title>
+  <link rel="stylesheet" href="static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static/css/app.css">
+  <script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+  <div id="app">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">XRP Wallets</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Secure yo coins fool!!</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="well">
+            <h1 class="text-center">
+                {{ totalXRP }} XRP / {{ totalUSD }} USD
+            </h1>
+          </div>
+          <ul class="wallets">
+            <li v-for="wallet in ripple_wallets">
+              <span>{{ wallet.address }}</span> <span>{{ wallet.xrp }} XRP / {{ wallet.usd }} USD</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 50px;">
+        <div class="col-md-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>XRP Price (USD)</th>
+                <th>Market Cap (USD)</th>
+                <th>1H Change (%)</th>
+                <th>24H Change (%)</th>
+                <th>7D Change (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ ripple_coin.price_usd }}</td>
+                <td>{{ ripple_coin.market_cap_usd }}</td>
+                <td>{{ ripple_coin.percent_change_1h }}</td>
+                <td>{{ ripple_coin.percent_change_24h }}</td>
+                <td>{{ ripple_coin.percent_change_7d }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { remote } = require('electron');
+    const mainProcess = remote.require('./main.js');
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        addresses: [],
+        ripple_coin: [],
+        ripple_wallets: []
+      },
+      mounted() {
+        this.addresses = mainProcess.addresses;
+        mainProcess.getRippleMarketValue().then(result => {
+          this.ripple_coin = result[0];
+          mainProcess.getLedgerVersion().then(version => {
+            this.addresses.forEach((item, index) => {
+              mainProcess.getRippleWalletValue(item).then(result => {
+                let xrp = result[0].value
+                let newItem = {
+                  address: item,
+                  xrp: xrp,
+                  usd: (xrp * this.ripple_coin.price_usd).toFixed(2)
+                };
+                this.ripple_wallets.push(newItem);
+              });
+            });
+          });
+        });
+      },
+      computed: {
+        totalUSD: function() {
+          let total = 0;
+          this.ripple_wallets.forEach((item, index) => {
+            for (const [key, value] of Object.entries(item)) {
+              if (key === 'usd') {
+                total += Number(value);
+              }
+            }
+          });
+          return total.toFixed(2);
+        },
+        totalXRP: function() {
+          let total = 0;
+          this.ripple_wallets.forEach((item, index) => {
+            for (const [key, value] of Object.entries(item)) {
+              if (key === 'xrp') {
+                total += Number(value);
+              }
+            }
+          });
+          return total.toFixed(2);
+        }
+      },
+      methods: {}
+    });
+  </script>
+</body>
+
+</html>
